@@ -3,15 +3,56 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define QUAD 20
+#define QUAD 25
 #define TAM_M 200/QUAD
 
 typedef struct{
     int R, G, B;
 }tipoCores;
 
+
+void desenhaRetas(int mLogica[TAM_M][TAM_M], int mVisuRetas[TAM_M][TAM_M]){
+         //Desenha as retas horizontais
+    int i, j;
+
+    for(i = 0; i < TAM_M; i++){
+        bool temLinha = (rand() % 100) < 25;
+
+        if(temLinha){
+            for(j = 0; j < TAM_M; j++){
+                Pintar(0, 0, 0, RETA, mVisuRetas[i][j]);
+            }
+        }
+        else{
+            for(j = 0; j < TAM_M; j++){
+                if(mLogica[i][j] > -1){
+                    if(i < TAM_M - 1 && mLogica[i][j] != mLogica[i + 1][j])
+                        Pintar(0, 0, 0, RETA, mVisuRetas[i][j]);
+                }
+            }
+        }
+
+
+    }
+
+            //Desenha as retas verticais
+   /* for(int x = 100; x >= -100; x -= QUAD){
+        Ponto p1 = {x, -100};
+        Ponto p2 = {x, 100};
+
+        bool temLinha = (rand() % 100) < 75;
+
+        if(temLinha){
+            CriaReta(p2, p1);
+            Grafite(5);
+            Pintar(0, 0, 0);
+        }
+    }*/
+}
+
 int main(){
     int mVisu[TAM_M][TAM_M];
+    int mVisuRetasHor[TAM_M][TAM_M], mVisuRetasVer[TAM_M][TAM_M];
     int mLogica[TAM_M][TAM_M];
     tipoCores validas[4] = {
         {255,255,0}, //amarelo
@@ -33,14 +74,22 @@ int main(){
         j = 0;
         for(int x = -100; x < 100; x += QUAD){
             Ponto p = {x, y};
+            Ponto p2 = {p.x + QUAD, p.y};
 
-            mVisu[i][j] = CriaQuadrado(QUAD, p);
+            mVisu[i][j] = CriaQuadrado(QUAD - 5, p);
             mLogica[i][j] = -1;
             Pintar(255, 255, 255);
 
-            CriaPonto(p);
-            Pintar(0, 0, 0);
-            Grafite(5);
+            mVisuRetasHor[i][j] = CriaReta(p, p2);
+            Grafite(2);
+            Pintar(255, 255, 255);
+
+            p2.x = p.x;
+            p2.y = p.y + QUAD;
+            mVisuRetasVer[i][j] = CriaReta(p, p2);
+            Grafite(2);
+            Pintar(255, 255, 255);
+
             j++;
         }
         i++;
@@ -67,6 +116,8 @@ int main(){
         }
         printf("\n");
     }
+
+    desenhaRetas(mLogica, mVisuRetasHor);
 
 
     Desenha();
